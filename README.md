@@ -28,10 +28,3 @@ This project is a web-based **Quiz Management System** that dynamically generate
 
 ---
 
-## 🔧 Installation & Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/ai-quiz-generator.git
-cd ai-quiz-generator
