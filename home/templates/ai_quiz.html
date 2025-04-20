@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Quiz Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5fa;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .header {
+      background-color: #f89ac3;
+      padding: 15px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .header button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.3s ease;
+    }
+    .container {
+      margin-top: 60px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    textarea {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+      font-family: 'Poppins', sans-serif;
+    }
+    button[type="submit"] {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background-color: #7a5ccc;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover {
+      background-color: #6b52a2;
+    }
+    h3 {
+      margin-top: 30px;
+      color: #23395d;
+    }
+    p {
+      font-size: 18px;
+      color: #555;
+      background: #f0f0ff;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <button class="login">Login</button>
+    <button class="signup">Sign Up</button>
+  </div>
+
+  <div class="container">
+    <h2 style="color: #6b52a2;">AI Quiz Generator</h2>
+    <form method="post">
+      {% csrf_token %}
+      <textarea name="context" placeholder="Enter paragraph here..." rows="5"></textarea><br>
+      <button type="submit">Generate Question</button>
+    </form>
+
+    {% if question %}
+      <h3>Generated Question:</h3>
+      <p>{{ question }}</p>
+    {% endif %}
+  </div>
+</body>
+</html>

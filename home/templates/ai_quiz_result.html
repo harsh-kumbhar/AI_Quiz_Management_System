@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>AI Quiz</title></head>
+<body>
+<h2>AI Generated Quiz</h2>
+<form method="post" action="{% url 'submit_ai_quiz' %}">
+    {% csrf_token %}
+    {% for q in quiz %}
+        <div>
+            <p><strong>Q{{ forloop.counter }}: {{ q.question }}</strong></p>
+            {% for key, option in q.options.items %}
+                <label>
+                    <input type="radio" name="q{{ forloop.parentloop.counter }}" value="{{ key }}">
+                    {{ key }}. {{ option }}
+                </label><br>
+            {% endfor %}
+            {% if show_answers %}
+                <p><strong>Correct Answer: {{ q.answer }}</strong></p>
+            {% endif %}
+            <hr>
+        </div>
+    {% endfor %}
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

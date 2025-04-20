@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Generated Quiz</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5fa;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      margin-top: 50px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #23395d;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .question {
+      margin-bottom: 20px;
+    }
+
+    .question p {
+      font-size: 18px;
+      color: #23395d;
+    }
+
+    .options {
+      text-align: left; /* Aligning options to the left */
+      margin-left: 20px;
+    }
+
+    .options label {
+      display: block;
+      margin: 10px 0;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .options input {
+      margin-right: 10px;
+    }
+
+    .feedback p {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .incorrect {
+      color: red;
+    }
+
+    button[type="submit"] {
+      padding: 15px 30px;
+      background-color: #7a5ccc;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #6b52a2;
+    }
+    button[type="button"]:hover {
+      background-color: #6b52a2;
+    }
+
+    .score {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #23395d;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 24px;
+      background-color: #7a5ccc;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #6b52a2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>AI Generated Quiz</h2>
+
+    {% if error %}
+      <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'submit_ai_quiz' %}">
+      {% csrf_token %}
+      {% for q in quiz %}
+        <div class="question">
+          <p><strong>Q{{ forloop.counter }}: {{ q.question }}</strong></p>
+
+          <div class="options">
+            {% for option in q.options %}
+              {% with option_lower=option|lower %}
+                <label
+                  {% if show_answers %}
+                    class="{% if option_lower == q.answer_clean %}option-correct{% elif option_lower == q.selected_clean %}option-incorrect{% endif %}"
+                  {% endif %}
+                >
+                  <input type="radio" name="q{{ forloop.parentloop.counter }}" value="{{ option|escape }}"
+                    {% if q.selected == option %}checked{% endif %}
+                    {% if show_answers %}disabled{% endif %}>
+                  {{ option|escape }}
+                </label><br>
+              {% endwith %}
+            {% endfor %}
+          </div>
+
+          {% if show_answers %}
+            <div class="feedback">
+              {% if q.selected_clean == q.answer_clean %}
+                <p class="correct">✅ Correct! You selected: <strong>{{ q.selected }}</strong></p>
+              {% else %}
+                <p class="incorrect">❌ Incorrect. You selected: <strong>{{ q.selected|default:"Not Answered" }}</strong><br>
+                ✅ Correct answer: <strong>{{ q.answer }}</strong></p>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+        <hr>
+      {% endfor %}
+
+      {% if not show_answers %}
+        <button type="submit">Submit Quiz</button>
+      {% else %}
+        <div class="score">
+          <h3>Your Score: {{ score }}/{{ total }}</h3>
+          <a href="{% url 'start_page' %}">
+            <button type="button">Go to Start Page</button>
+          </a>
+        </div>
+      {% endif %}
+    </form>
+  </div>
+
+</body>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 80px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        h2 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #6b52a2;
+            margin-bottom: 20px;
+        }
+        .score {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .summary {
+            font-size: 20px;
+            color: #555;
+        }
+        .question-list {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+        }
+        .correct-answer {
+            color: #6b52a2;
+            font-weight: bold;
+        }
+        .home-btn {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #6b52a2;
+            color: white;
+            font-size: 24px;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Total Score: {{ score }} / {{ total }}</h2>
+    <p>You got {{ score }} out of {{ total }} questions correct.</p>
+
+    <div class="question-list">
+        <div v-for="(question, index) in questions" :key="index" class="question">
+            <p><strong>Q[[ index + 1 ]]:</strong> [[ question.question ]]</p>
+            <p>Correct Answer: <span class="correct-answer">[[ question.correctAnswer ]]</span></p>
+        </div>
+    </div>
+
+    <button class="home-btn" @click="goHome">Go to Home</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+<script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var app = new Vue({
+        el: '.container',
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                score: urlParams.get('score'),
+                total: urlParams.get('total'),
+                questions: []
+            };
+        },
+        methods: {
+            getResults() {
+                fetch('/api/get-quiz-results/')
+                    .then(response => response.json())
+                    .then(result => {
+                        this.questions = result.data;
+                    });
+            },
+            goHome() {
+                window.location.href = '/';
+            }
+        },
+        created() {
+            this.getResults();
+        }
+    });
+
+    // Disable back button completely
+history.pushState(null, '', location.href);
+window.onpopstate = function (event) {
+    history.pushState(null, '', location.href);
+    alert('You have already submitted the quiz!!');
+};
+window.addEventListener('popstate', function (event) {
+    history.pushState(null, '', location.href);
+});
+
+</script>
+</body>
+</html>
